@@ -6,11 +6,11 @@ from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import tensor_array_ops
 from tensorflow.python.ops import variable_scope as vs
-from tensorflow.python.ops.rnn_cell_impl import _concat, _like_rnncell
+from tensorflow.python.ops.rnn_cell_impl import _concat, assert_like_rnncell
 from tensorflow.python.ops.rnn import _maybe_tensor_shape_from_tensor
 from tensorflow.python.util import nest
 from tensorflow.python.framework import tensor_shape
-from tensorflow.python.eager import context
+from tensorflow.python.util import is_in_graph_mode
 
 
 def raw_rnn(cell, loop_fn, parallel_iterations=None, swap_memory=False, scope=None):
@@ -19,15 +19,14 @@ def raw_rnn(cell, loop_fn, parallel_iterations=None, swap_memory=False, scope=No
     (https://github.com/tensorflow/tensorflow/blob/r1.4/tensorflow/python/ops/rnn.py)
     to emit arbitrarily nested states for each time step (concatenated along the time axis)
     in addition to the outputs at each timestep and the final state
-
     returns (
         states for all timesteps,
         outputs for all timesteps,
         final cell state,
     )
     """
-    if not _like_rnncell(cell):
-        raise TypeError("cell must be an instance of RNNCell")
+    assert_like_rnncell("Raw rnn cell",cell)
+
     if not callable(loop_fn):
         raise TypeError("loop_fn must be a callable")
 
@@ -37,7 +36,7 @@ def raw_rnn(cell, loop_fn, parallel_iterations=None, swap_memory=False, scope=No
     # determined by the parent scope, or is set to place the cached
     # Variable using the same placement as for the rest of the RNN.
     with vs.variable_scope(scope or "rnn") as varscope:
-        if context.in_graph_mode():
+        if is_in_graph_mode.IS_IN_GRAPH_MODE():
             if varscope.caching_device is None:
                 varscope.set_caching_device(lambda op: op.device)
 
@@ -211,12 +210,9 @@ def rnn_teacher_force(inputs, cell, sequence_length, initial_state, scope='dynam
 def rnn_free_run(cell, initial_state, sequence_length, initial_input=None, scope='dynamic-rnn-free-run'):
     """
     Implementation of an rnn which feeds its feeds its predictions back to itself at the next timestep.
-
     cell must implement two methods:
-
         cell.output_function(state) which takes in the state at timestep t and returns
         the cell input at timestep t+1.
-
         cell.termination_condition(state) which returns a boolean tensor of shape
         [batch_size] denoting which sequences no longer need to be sampled.
     """
