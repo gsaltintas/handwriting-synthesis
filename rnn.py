@@ -119,10 +119,10 @@ class rnn(TFBaseModel):
 
         bernoulli_likelihood = tf.squeeze(tf.where(tf.equal(tf.ones_like(y_3), y_3), es, 1 - es))
 
-        nll = -(tf.log(gmm_likelihood) + tf.log(bernoulli_likelihood))
+        nll = -(tf.math.log(gmm_likelihood) + tf.math.log(bernoulli_likelihood))
         sequence_mask = tf.logical_and(
             tf.sequence_mask(lengths, maxlen=tf.shape(y)[1]),
-            tf.logical_not(tf.is_nan(nll)),
+            tf.logical_not(tf.math.is_nan(nll)),
         )
         nll = tf.where(sequence_mask, nll, tf.zeros_like(nll))
         num_valid = tf.reduce_sum(tf.cast(sequence_mask, tf.float32), axis=1)
@@ -163,18 +163,18 @@ class rnn(TFBaseModel):
         )[1]
 
     def calculate_loss(self):
-        self.x = tf.placeholder(tf.float32, [None, None, 3])
-        self.y = tf.placeholder(tf.float32, [None, None, 3])
-        self.x_len = tf.placeholder(tf.int32, [None])
-        self.c = tf.placeholder(tf.int32, [None, None])
-        self.c_len = tf.placeholder(tf.int32, [None])
+        self.x = tf.compat.v1.placeholder(tf.float32, [None, None, 3])
+        self.y = tf.compat.v1.placeholder(tf.float32, [None, None, 3])
+        self.x_len = tf.compat.v1.placeholder(tf.int32, [None])
+        self.c = tf.compat.v1.placeholder(tf.int32, [None, None])
+        self.c_len = tf.compat.v1.placeholder(tf.int32, [None])
 
-        self.sample_tsteps = tf.placeholder(tf.int32, [])
-        self.num_samples = tf.placeholder(tf.int32, [])
-        self.prime = tf.placeholder(tf.bool, [])
-        self.x_prime = tf.placeholder(tf.float32, [None, None, 3])
-        self.x_prime_len = tf.placeholder(tf.int32, [None])
-        self.bias = tf.placeholder_with_default(
+        self.sample_tsteps = tf.compat.v1.placeholder(tf.int32, [])
+        self.num_samples = tf.compat.v1.placeholder(tf.int32, [])
+        self.prime = tf.compat.v1.placeholder(tf.bool, [])
+        self.x_prime = tf.compat.v1.placeholder(tf.float32, [None, None, 3])
+        self.x_prime_len = tf.compat.v1.placeholder(tf.int32, [None])
+        self.bias = tf.compat.v1.placeholder_with_default(
             tf.zeros([self.num_samples], dtype=tf.float32), [None])
 
         cell = LSTMAttentionCell(

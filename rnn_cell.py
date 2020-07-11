@@ -13,7 +13,7 @@ LSTMAttentionCellState = namedtuple(
 )
 
 
-class LSTMAttentionCell(tf.nn.rnn_cell.RNNCell):
+class LSTMAttentionCell(tf.compat.v1.nn.rnn_cell.RNNCell):
 
     def __init__(
         self,
@@ -73,7 +73,7 @@ class LSTMAttentionCell(tf.nn.rnn_cell.RNNCell):
         )
 
     def __call__(self, inputs, state, scope=None):
-        with tf.variable_scope(scope or type(self).__name__, reuse=tf.AUTO_REUSE):
+        with tf.compat.v1.variable_scope(scope or type(self).__name__, reuse=tf.compat.v1.AUTO_REUSE):
 
             # lstm 1
             s1_in = tf.concat([state.w, inputs], axis=1)
@@ -126,7 +126,7 @@ class LSTMAttentionCell(tf.nn.rnn_cell.RNNCell):
             return s3_out, new_state
 
     def output_function(self, state):
-        params = dense_layer(state.h3, self.output_units, scope='gmm', reuse=tf.AUTO_REUSE)
+        params = dense_layer(state.h3, self.output_units, scope='gmm', reuse=tf.compat.v1.AUTO_REUSE)
         pis, mus, sigmas, rhos, es = self._parse_parameters(params)
         mu1, mu2 = tf.split(mus, 2, axis=1)
         mus = tf.stack([mu1, mu2], axis=2)
