@@ -14,15 +14,15 @@ def dense_layer(inputs, output_units, bias=True, activation=None, batch_norm=Non
     Returns:
         Tensor of shape [batch size, output_units].
     """
-    with tf.variable_scope(scope, reuse=reuse):
-        W = tf.get_variable(
+    with tf.compat.v1.variable_scope(scope, reuse=reuse):
+        W = tf.compat.v1.get_variable(
             name='weights',
             initializer=tf.contrib.layers.variance_scaling_initializer(),
             shape=[shape(inputs, -1), output_units]
         )
         z = tf.matmul(inputs, W)
         if bias:
-            b = tf.get_variable(
+            b = tf.compat.v1.get_variable(
                 name='biases',
                 initializer=tf.constant_initializer(),
                 shape=[output_units]
@@ -54,15 +54,15 @@ def time_distributed_dense_layer(
     Returns:
         Tensor of shape [batch size, max sequence length, output_units].
     """
-    with tf.variable_scope(scope, reuse=reuse):
-        W = tf.get_variable(
+    with tf.compat.v1.variable_scope(scope, reuse=reuse):
+        W = tf.compat.v1.get_variable(
             name='weights',
             initializer=tf.contrib.layers.variance_scaling_initializer(),
             shape=[shape(inputs, -1), output_units]
         )
         z = tf.einsum('ijk,kl->ijl', inputs, W)
         if bias:
-            b = tf.get_variable(
+            b = tf.compat.v1.get_variable(
                 name='biases',
                 initializer=tf.constant_initializer(),
                 shape=[output_units]

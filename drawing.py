@@ -1,5 +1,4 @@
 from __future__ import print_function
-
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -8,20 +7,23 @@ from scipy.interpolate import interp1d
 from scipy.signal import savgol_filter
 
 
-# alphabet = ['e', 'E', 'b', 'W', ' ', 'g', 'u', '!', 'm', 'y', '@', 'U', '0', 'Z', 'k', 'c', 'P', '1', '?', 'i', 'n',
-#             'H', 'l', 'S', "'", 'G', 'd', 'a', '5', 's', ':', 'M', ';', '.', 'R', '"', 'x', ']', 'q', 'h', 'w', 'D',
-#             '[', 't', '2', '*', 'z', '-', 'V', 'Y', '/', 'T', 'F', 'r', '%', '4', ',', 'K', '+', 'o', '6', '(', '3',
-#             '#', 'v', 'L', 'Q', 'p', 'J', 'j', 'B', '_', '&', 'X', 'N', 'C', '7', '9', '8', 'I', 'f', 'O', 'A', '>',
-#             ')']
+# alphabet = [
+#     '\x00', ' ', '!', '"', '#', "'", '(', ')', ',', '-', '.',
+#     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';',
+#     '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+#     'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Y',
+#     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+#     'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+#     'y', 'z'
+# ]
 alphabet = [
-    '\x00', ' ', '!', '"', '#', "'", '(', ')', ',', '-', '.',
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';',
-    '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-    'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Y',
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-    'y', 'z'
-]
+    'e', 'E', 'b', 'W', ' ', 'g', 'u', '!', 'm', 'y', '@', 'U', '0',
+    'Z', 'k', 'c', 'P', '1', '?', 'i', 'n', 'H', 'l', 'S', "'", 'G',
+    'd', 'a', '5', 's', ':', 'M', ';', '.', 'R', '"', 'x', ']', 'q',
+    'h', 'w', 'D', '[', 't', '2', '*', 'z', '-', 'V', 'Y', '/', 'T',
+    'F', 'r', '%', '4', ',', 'K', '+', 'o', '6', '(', '3', '#', 'v',
+    'L', 'Q', 'p', 'J', 'j', 'B', '_', '&', 'X', 'N', 'C', '7', '9',
+    '8', 'I', 'f', 'O', 'A', '>', ')']
 alphabet_ord = list(map(ord, alphabet))
 alpha_to_num = defaultdict(int, list(map(reversed, enumerate(alphabet))))
 num_to_alpha = dict(enumerate(alphabet_ord))
@@ -192,7 +194,7 @@ def draw(
         coords = zip(*stroke)
         ax.plot(coords[0], coords[1], 'k')
         stroke = []
-
+    # so that the box doesn't start from too high
     ax.set_xlim(0, 600)
     ax.set_ylim(0, 40)
 
