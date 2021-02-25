@@ -1,12 +1,18 @@
 from __future__ import print_function
+
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
+from scipy.signal import savgol_filter
 
 
+# alphabet = ['e', 'E', 'b', 'W', ' ', 'g', 'u', '!', 'm', 'y', '@', 'U', '0', 'Z', 'k', 'c', 'P', '1', '?', 'i', 'n',
+#             'H', 'l', 'S', "'", 'G', 'd', 'a', '5', 's', ':', 'M', ';', '.', 'R', '"', 'x', ']', 'q', 'h', 'w', 'D',
+#             '[', 't', '2', '*', 'z', '-', 'V', 'Y', '/', 'T', 'F', 'r', '%', '4', ',', 'K', '+', 'o', '6', '(', '3',
+#             '#', 'v', 'L', 'Q', 'p', 'J', 'j', 'B', '_', '&', 'X', 'N', 'C', '7', '9', '8', 'I', 'f', 'O', 'A', '>',
+#             ')']
 alphabet = [
     '\x00', ' ', '!', '"', '#', "'", '(', ')', ',', '-', '.',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';',
@@ -46,7 +52,7 @@ def skew(coords, degrees):
     skews strokes by given degrees
     """
     coords = np.copy(coords)
-    theta = degrees * np.pi/180
+    theta = degrees * np.pi / 180
     A = np.array([[np.cos(-theta), 0], [np.sin(-theta), 1]])
     coords[:, :2] = np.dot(coords[:, :2], A)
     return coords
@@ -112,8 +118,8 @@ def interpolate(coords, factor=2):
             f_x = interp1d(np.arange(len(stroke)), stroke[:, 0], kind='cubic')
             f_y = interp1d(np.arange(len(stroke)), stroke[:, 1], kind='cubic')
 
-            xx = np.linspace(0, len(stroke) - 1, factor*(len(stroke)))
-            yy = np.linspace(0, len(stroke) - 1, factor*(len(stroke)))
+            xx = np.linspace(0, len(stroke) - 1, factor * (len(stroke)))
+            yy = np.linspace(0, len(stroke) - 1, factor * (len(stroke)))
 
             x_new = f_x(xx)
             y_new = f_y(yy)
@@ -187,8 +193,8 @@ def draw(
         ax.plot(coords[0], coords[1], 'k')
         stroke = []
 
-    ax.set_xlim(-50, 600)
-    ax.set_ylim(-40, 40)
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 40)
 
     ax.set_aspect('equal')
     plt.tick_params(

@@ -31,12 +31,16 @@ def get_arguments():
         type=str, default='images/0.png'
     )
     parser.add_argument(
-        '-l', '--line_width', help='specify line width, [0.5, 2.5]',
+        '-l', '--line_width', help='specify line width of strokes, [0.5, 2.5]',
         type=float, default=0.75
     )
     parser.add_argument(
-        '-sz', '--size', help='size of the image, (width, height)',
-        type=int, default=-1
+        '-lh', '--line_height', help='specify line height',
+        type=float, default=60
+    )
+    parser.add_argument(
+        '-o', '--offset', help='offset parameter',
+        type=int, default=1
     )
     parser.add_argument(
         '-w', '--width', help='size of the image, (width, height)',
@@ -45,10 +49,6 @@ def get_arguments():
     parser.add_argument(
         '-he', '--height', help='size of the image, (width, height)',
         type=int, default=SIZE_DEFAULT
-    )
-    parser.add_argument(
-        '-cr', '--auto_crop', help='true to crop to the exact image',
-        type=bool, default=True
     )
 
     return parser.parse_args()
@@ -62,17 +62,17 @@ if __name__ == "__main__":
         with open(args.file, 'r') as fl:
             lines = [i.strip() for i in fl.readlines()]
     elif args.text:
-        lines = [args.text]
+        lines = args.text.split("\\n")
 
     style = args.style
     bias = args.bias
     line_width = args.line_width
+    line_height = args.line_height
 
     width = args.width
     height = args.height
-    auto_crop = args.auto_crop
 
-    auto_crop = width == SIZE_DEFAULT and height == SIZE_DEFAULT
+    offset_param=args.offset
 
     color = args.color
     color = color.replace(' ', '')
@@ -99,4 +99,6 @@ if __name__ == "__main__":
         styles=styles,
         stroke_colors=stroke_colors,
         stroke_widths=stroke_widths,
+        line_height=line_height,
+        offset_param=offset_param
     )

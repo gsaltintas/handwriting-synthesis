@@ -38,7 +38,8 @@ class Hand(object):
         )
         self.nn.restore()
 
-    def write(self, filename, lines, biases=None, styles=None, stroke_colors=None, stroke_widths=None, line_height=60):
+    def write(self, filename, lines, biases=None, styles=None, stroke_colors=None, stroke_widths=None, line_height=60,
+              view_width=1000, offset_param=1.5):
         valid_char_set = set(drawing.alphabet)
         for line_num, line in enumerate(lines):
             if len(line) > 75:
@@ -59,12 +60,13 @@ class Hand(object):
                     )
 
         strokes = self._sample(lines, biases=biases, styles=styles)
-        self._draw(strokes, lines, filename, stroke_colors=stroke_colors, stroke_widths=stroke_widths, line_height=line_height)
+        self._draw(strokes, lines, filename, stroke_colors=stroke_colors, stroke_widths=stroke_widths,
+                   line_height=line_height, view_width=view_width, offset_param=offset_param)
 
     def _sample(self, lines, biases=None, styles=None):
         num_samples = len(lines)
-        max_tsteps = 40*max([len(i) for i in lines])
-        biases = biases if biases is not None else [0.5]*num_samples
+        max_tsteps = 40 * max([len(i) for i in lines])
+        biases = biases if biases is not None else [0.5] * num_samples
 
         x_prime = np.zeros([num_samples, 1200, 3])
         x_prime_len = np.zeros([num_samples])
@@ -107,36 +109,39 @@ class Hand(object):
         samples = [sample[~np.all(sample == 0.0, axis=1)] for sample in samples]
         return samples
 
-    def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None, line_height=60):
-        stroke_colors = stroke_colors or ['black']*len(lines)
-        stroke_widths = stroke_widths or [2]*len(lines)
+    def _draw(self, strokes, lines, filename, stroke_colors=None, stroke_widths=None, line_height=60, view_width=1000,
+              offset_param=1.5):
+        stroke_colors = stroke_colors or ['black'] * len(lines)
+        stroke_widths = stroke_widths or [2] * len(lines)
 
         # line_height = 60
-        view_width = 1000
-        view_height = line_height*(len(strokes) + 1)
+        view_width = view_width
+        view_height = line_height * (len(strokes))
 
         dwg = svgwrite.Drawing(filename=filename)
         dwg.viewbox(width=view_width, height=view_height)
-        dwg.add(dwg.rect(insert=(0, 0), size=(view_width, view_height), fill='white', fill_opacity=0))
+        dwg.add(dwg.rect(insert=(0, 0), size=(view_width, view_height), fill='white', fill_opacity=100))
 
-        initial_coord = np.array([0, -(3*line_height / 4)])
+        # initial_coord = np.array([0, -(3*line_height / 4)])
+        initial_coord = np.array([0, -(0 * line_height / 4)])
         for offsets, line, color, width in zip(strokes, lines, stroke_colors, stroke_widths):
 
             if not line:
                 initial_coord[1] -= line_height
                 continue
 
-            offsets[:, :2] *= 1.5
+            offsets[:, :2] *= offset_param
             strokes = drawing.offsets_to_coords(offsets)
             strokes = drawing.denoise(strokes)
             strokes[:, :2] = drawing.align(strokes[:, :2])
 
             strokes[:, 1] *= -1
-            strokes[:, :2] -= strokes[:, :2].min() + initial_coord
-            strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2
+            strokes[:, :2] -= strokes[:, :2].min() + initial_coord  # increases y coordinate
+            # strokes[:, 0] += (view_width - strokes[:, 0].max()) / 2   # aligns horizontally
 
             prev_eos = 1.0
-            p = "M{},{} ".format(0, 0)
+            # p = "M{},{} ".format(0, 0)
+            p = ""
             for x, y, eos in zip(*strokes.T):
                 p += '{}{},{} '.format('M' if prev_eos == 1.0 else 'L', x, y)
                 prev_eos = eos
@@ -151,7 +156,14 @@ class Hand(object):
 
 if __name__ == '__main__':
     hand = Hand()
-
+    hand.write(
+        filename="C:\\Users\\HEWLETT-PACKARD\\Documents\\code\\powerpoint_project\\powerpoint_files\\HandwritingPresentations\\results\\NSF_SBIRSTTR_PPT_042015\\4_0.svg",
+        lines="Grants that go beyond funding".split("\\n"),
+        biases=[6.2],
+        styles=[1],
+        stroke_colors=["black"],
+        line_height=58
+        )
     # usage demo
     lines = [
         "Now this is a story all about how",
@@ -170,7 +182,10 @@ if __name__ == '__main__':
         biases=biases,
         styles=styles,
         stroke_colors=stroke_colors,
-        stroke_widths=stroke_widths
+        stroke_widths=stroke_widths,
+        line_height=20,
+        # view_width=100,
+        offset_param=1,
     )
 
     # demo number 1 - fixed bias, fixed style
@@ -199,7 +214,7 @@ if __name__ == '__main__':
 
     # demo number 3 - varying bias, fixed style
     lines = lyrics.give_up.split("\n")
-    biases = .2*np.flip(np.cumsum([len(i) == 0 for i in lines]), 0)
+    biases = .2 * np.flip(np.cumsum([len(i) == 0 for i in lines]), 0)
     styles = [7 for i in lines]
 
     hand.write(
