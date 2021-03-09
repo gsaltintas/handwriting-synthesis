@@ -4,9 +4,8 @@ import logging
 import numpy as np
 import svgwrite
 
-import drawing
-import lyrics
-from rnn import rnn
+from handwriting import drawing, lyrics
+from handwriting.rnn import rnn
 
 
 class Hand(object):
@@ -14,8 +13,8 @@ class Hand(object):
     def __init__(self):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
         self.nn = rnn(
-            log_dir='logs',
-            checkpoint_dir='checkpoints',
+            log_dir='../logs',
+            checkpoint_dir='../checkpoints',
             prediction_dir='predictions',
             learning_rates=[.0001, .00005, .00002],
             batch_sizes=[32, 64, 64],
@@ -177,7 +176,7 @@ if __name__ == '__main__':
     stroke_widths = [1, 2, 1, 2]
 
     hand.write(
-        filename='img/usage_demo.svg',
+        filename='../img/usage_demo.svg',
         lines=lines,
         biases=biases,
         styles=styles,
@@ -194,7 +193,7 @@ if __name__ == '__main__':
     styles = [12 for i in lines]
 
     hand.write(
-        filename='img/all_star.svg',
+        filename='../img/all_star.svg',
         lines=lines,
         biases=biases,
         styles=styles,
@@ -206,7 +205,7 @@ if __name__ == '__main__':
     styles = np.cumsum(np.array([len(i) for i in lines]) == 0).astype(int)
 
     hand.write(
-        filename='img/downtown.svg',
+        filename='../img/downtown.svg',
         lines=lines,
         biases=biases,
         styles=styles,
@@ -218,7 +217,7 @@ if __name__ == '__main__':
     styles = [7 for i in lines]
 
     hand.write(
-        filename='img/give_up.svg',
+        filename='../img/give_up.svg',
         lines=lines,
         biases=biases,
         styles=styles,

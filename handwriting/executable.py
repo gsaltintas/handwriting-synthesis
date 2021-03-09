@@ -2,7 +2,7 @@ import argparse
 
 import numpy as np
 
-from demo import Hand
+from handwriting.demo import Hand
 
 SIZE_DEFAULT = -1
 

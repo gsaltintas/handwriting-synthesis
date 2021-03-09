@@ -6,3 +6,10 @@ data/processed
 logs
 predictions
 .idea/
+checkpoints/
+
+# images
+*.svg
+*.png
+*.jpg
+*.gz

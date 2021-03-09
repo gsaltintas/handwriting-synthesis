@@ -1,2 +1,4 @@
+model_checkpoint_path: "model-2400"
+all_model_checkpoint_paths: "model-2400"
 model_checkpoint_path: "model-17900"
 all_model_checkpoint_paths: "model-17900"

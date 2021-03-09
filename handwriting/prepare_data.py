@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 import numpy as np
 
-import drawing
+from handwriting import drawing
 
 
 def get_stroke_sequence(filename):
@@ -51,7 +51,7 @@ def collect_data():
 
     # low quality samples (selected by collecting samples to
     # which the trained model assigned very low likelihood)
-    blacklist = set(np.load('data/blacklist.npy', allow_pickle=True))
+    blacklist = set(np.load('../data/blacklist.npy', allow_pickle=True))
 
     stroke_fnames, transcriptions, writer_ids = [], [], []
     for i, fname in enumerate(fnames):

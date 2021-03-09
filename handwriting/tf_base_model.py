@@ -9,7 +9,7 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from tf_utils import shape
+from handwriting.tf_utils import shape
 
 
 class TFBaseModel(object):

@@ -4,12 +4,12 @@ import os
 import numpy as np
 import tensorflow as tf
 
-import drawing
-from data_frame import DataFrame
-from rnn_cell import LSTMAttentionCell
-from rnn_ops import rnn_free_run
-from tf_base_model import TFBaseModel
-from tf_utils import time_distributed_dense_layer
+from handwriting import drawing
+from handwriting.data_frame import DataFrame
+from handwriting.rnn_cell import LSTMAttentionCell
+from handwriting.rnn_ops import rnn_free_run
+from handwriting.tf_base_model import TFBaseModel
+from handwriting.tf_utils import time_distributed_dense_layer
 
 
 class DataReader(object):
@@ -211,8 +211,8 @@ if __name__ == '__main__':
 
     nn = rnn(
         reader=dr,
-        log_dir='logs',
-        checkpoint_dir='checkpoints',
+        log_dir='../logs',
+        checkpoint_dir='../checkpoints',
         prediction_dir='predictions',
         learning_rates=[.0001, .00005, .00002],
         batch_sizes=[32, 64, 64],

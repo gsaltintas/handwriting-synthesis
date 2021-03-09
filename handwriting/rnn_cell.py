@@ -4,7 +4,7 @@ import tensorflow as tf
 import tensorflow.contrib.distributions as tfd
 import numpy as np
 
-from tf_utils import dense_layer, shape
+from handwriting.tf_utils import dense_layer, shape
 
 
 LSTMAttentionCellState = namedtuple(
